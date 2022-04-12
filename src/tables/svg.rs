@@ -1,5 +1,7 @@
 //! An [SVG Table](https://docs.microsoft.com/en-us/typography/opentype/spec/svg) implementation.
 
+use core::ops::Range;
+
 use crate::GlyphId;
 use crate::parser::{FromData, LazyArray16, NumFrom, Offset, Offset32, Stream};
 
@@ -46,12 +48,31 @@ impl<'a> SvgDocumentsList<'a> {
         self.data.get(offset..offset + usize::num_from(record.svg_doc_length))
     }
 
+    /// Returns SVG document data and glyph indices at index.
+    ///
+    /// `index` is not a GlyphId. You should use [`find()`](SvgDocumentsList::find) instead.
+    #[inline]
+    pub fn get_image_and_glyph_indices(&self, index: u16) -> Option<(&'a [u8], Range<GlyphId>)> {
+        let record = self.records.get(index)?;
+        let offset = record.svg_doc_offset?.to_usize();
+        self.data.get(offset..offset + usize::num_from(record.svg_doc_length))
+            .map(|data| (data, std::ops::Range { start: record.start_glyph_id, end: record.end_glyph_id }))
+    }
+
     /// Returns a SVG document data by glyph ID.
     #[inline]
     pub fn find(&self, glyph_id: GlyphId) -> Option<&'a [u8]> {
         let index = self.records.into_iter()
             .position(|v| (v.start_glyph_id..=v.end_glyph_id).contains(&glyph_id))?;
         self.get(index as u16)
+    }
+
+    /// Returns a SVG document data and list of glyph indices represented by the same svg data for a glyph ID.
+    #[inline]
+    pub fn find_image_and_glyph_indices(&self, glyph_id: GlyphId) -> Option<(&'a [u8], Range<GlyphId>)> {
+        let index = self.records.into_iter()
+            .position(|v| (v.start_glyph_id..=v.end_glyph_id).contains(&glyph_id))?;
+        self.get_image_and_glyph_indices(index as u16)
     }
 
     /// Returns the number of SVG documents in the list.

@@ -58,6 +58,8 @@ mod tables;
 #[cfg(feature = "opentype-layout")] mod ggg;
 #[cfg(feature = "variable-fonts")] mod var_store;
 
+use core::ops::Range;
+
 use parser::{Stream, NumFrom, TryNumFrom, Offset32, Offset};
 pub use parser::{FromData, LazyArray16, LazyArrayIter16, LazyArray32, LazyArrayIter32, Fixed};
 use head::IndexToLocationFormat;
@@ -1671,6 +1673,22 @@ impl<'a> Face<'a> {
     #[inline]
     pub fn glyph_svg_image(&self, glyph_id: GlyphId) -> Option<&'a [u8]> {
         self.tables.svg.and_then(|svg| svg.documents.find(glyph_id))
+    }
+
+    /// Returns a reference to a glyph's SVG image and a range of glyph ids that can be 
+    /// represented using the same svg document
+    /// A font can define a glyph using a raster or a vector image instead of a simple outline.
+    /// Which is primarily used for emojis. This method should be used to access SVG images.
+    ///
+    /// Note that this method will return just an SVG data. It should be rendered
+    /// or even decompressed (in case of SVGZ) by the caller.
+    /// We don't validate or preprocess it in any way.
+    ///
+    /// Also, a font can contain both: images and outlines. So when this method returns `None`
+    /// you should also try `outline_glyph()` afterwards.
+    #[inline]
+    pub fn glyph_svg_image_and_glyph_ids(&self, glyph_id: GlyphId) -> Option<(&'a [u8], Range<GlyphId>)> {
+        self.tables.svg.and_then(|svg| svg.documents.find_image_and_glyph_indices(glyph_id))
     }
 
     /// Returns an iterator over variation axes.
