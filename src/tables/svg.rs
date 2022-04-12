@@ -48,7 +48,7 @@ impl<'a> SvgDocumentsList<'a> {
         self.data.get(offset..offset + usize::num_from(record.svg_doc_length))
     }
 
-    /// Returns SVG document data and glyph indices at index.
+    /// Returns SVG document data and glyph indices represented by the same svg data at an index.
     ///
     /// `index` is not a GlyphId. You should use [`find()`](SvgDocumentsList::find) instead.
     #[inline]
@@ -67,7 +67,7 @@ impl<'a> SvgDocumentsList<'a> {
         self.get(index as u16)
     }
 
-    /// Returns a SVG document data and list of glyph indices represented by the same svg data for a glyph ID.
+    /// For a glyph ID, returns the SVG document data and list of glyph indices represented by the same svg data
     #[inline]
     pub fn find_image_and_glyph_indices(&self, glyph_id: GlyphId) -> Option<(&'a [u8], Range<GlyphId>)> {
         let index = self.records.into_iter()

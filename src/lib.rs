@@ -1675,8 +1675,9 @@ impl<'a> Face<'a> {
         self.tables.svg.and_then(|svg| svg.documents.find(glyph_id))
     }
 
-    /// Returns a reference to a glyph's SVG image and a range of glyph ids that can be 
+    /// Returns a reference to a glyph's SVG image and a range of glyph ids that are
     /// represented using the same svg document
+    /// 
     /// A font can define a glyph using a raster or a vector image instead of a simple outline.
     /// Which is primarily used for emojis. This method should be used to access SVG images.
     ///
