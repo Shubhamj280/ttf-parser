@@ -56,7 +56,7 @@ impl<'a> SvgDocumentsList<'a> {
         let record = self.records.get(index)?;
         let offset = record.svg_doc_offset?.to_usize();
         self.data.get(offset..offset + usize::num_from(record.svg_doc_length))
-            .map(|data| (data, std::ops::Range { start: record.start_glyph_id, end: record.end_glyph_id }))
+            .map(|data| (data, std::ops::Range { start: record.start_glyph_id, end: GlyphId(record.end_glyph_id.0 + 1) }))
     }
 
     /// Returns a SVG document data by glyph ID.
