@@ -688,8 +688,9 @@ impl<'a> Table<'a> {
         }
     }
 
+    ///
     #[inline]
-    pub(crate) fn get(&self, glyph_id: GlyphId) -> Option<&'a [u8]> {
+    pub fn get(&self, glyph_id: GlyphId) -> Option<&'a [u8]> {
         let range = self.loca_table.glyph_range(glyph_id)?;
         self.data.get(range)
     }
