@@ -749,8 +749,10 @@ pub struct FaceTables<'a> {
 /// While `Face` is technically copyable, we disallow it because it's almost 2KB big.
 #[derive(Clone)]
 pub struct Face<'a> {
-    raw_face: RawFace<'a>,
-    tables: FaceTables<'a>, // Parsed tables.
+    /// Public raw_face
+    pub raw_face: RawFace<'a>,
+    /// Public tables
+    pub tables: FaceTables<'a>, // Parsed tables.
     #[cfg(feature = "variable-fonts")] coordinates: VarCoords,
 }
 
