@@ -669,6 +669,25 @@ impl<'a> Table<'a> {
         outline_impl(self.loca_table, self.data, glyph_data, 0, &mut b)?
     }
 
+    /// get flag bit for a glyph.
+    #[inline]
+    pub fn get_overlap_bit(&self, glyph_id: GlyphId) -> u8 {
+        let glyph_data = self.get(glyph_id).unwrap();
+        let mut s = Stream::new(glyph_data);
+        let number_of_contours = s.read::<i16>().unwrap();
+        s.advance(8);
+
+        if number_of_contours > 0 {
+            let number_of_contours = NonZeroU16::new(number_of_contours as u16).unwrap();
+            let _endpoints = s.read_array16::<u16>(number_of_contours.get()).unwrap();
+            let instructions_len = s.read::<u16>().unwrap();
+            s.advance(usize::from(instructions_len));
+            (s.read::<u8>().unwrap() >> 6) & 1
+        } else {
+            ((s.read::<u16>().unwrap() >> 10) & 1) as u8
+        }
+    }
+
     #[inline]
     pub(crate) fn get(&self, glyph_id: GlyphId) -> Option<&'a [u8]> {
         let range = self.loca_table.glyph_range(glyph_id)?;
