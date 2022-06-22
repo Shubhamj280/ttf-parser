@@ -676,14 +676,15 @@ impl<'a> Table<'a> {
         let mut s = Stream::new(glyph_data);
         let number_of_contours = s.read::<i16>().unwrap();
         s.advance(8);
-
         if number_of_contours > 0 {
             let number_of_contours = NonZeroU16::new(number_of_contours as u16).unwrap();
             let _endpoints = s.read_array16::<u16>(number_of_contours.get()).unwrap();
             let instructions_len = s.read::<u16>().unwrap();
             s.advance(usize::from(instructions_len));
+            println!("simple-glyph-{:?}", glyph_data[s.offset()..].as_ptr());
             (s.read::<u8>().unwrap() >> 6) & 1
         } else {
+            println!("composite-glyph-{:?}", glyph_data[s.offset()..].as_ptr());
             ((s.read::<u16>().unwrap() >> 10) & 1) as u8
         }
     }
