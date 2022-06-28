@@ -640,7 +640,7 @@ fn resolve_coords_len(
 /// https://docs.microsoft.com/en-us/typography/opentype/spec/glyf).
 #[derive(Clone, Copy)]
 pub struct Table<'a> {
-    pub(crate) data: &'a [u8],
+    pub data: &'a [u8],
     loca_table: loca::Table<'a>,
 }
 
