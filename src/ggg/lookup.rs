@@ -82,10 +82,10 @@ impl<'a> LookupSubtables<'a> {
     /// or [`SubstitutionSubtable`](crate::gsub::SubstitutionSubtable).
     ///
     /// Technically, we can enforce it at compile time, but it makes code too convoluted.
-    pub fn get<T: LookupSubtable<'a>>(&self, index: u16) -> Option<T> {
+    pub fn get<T: LookupSubtable<'a>>(&self, index: u16) -> Option<(T, &'a [u8])> {
         let offset = self.offsets.get(index)?.to_usize();
         let data = self.data.get(offset..)?;
-        T::parse(data, self.kind)
+        T::parse(data, self.kind).map(|t| (t, data))
     }
 
     /// Creates an iterator over subtables.
@@ -115,7 +115,7 @@ impl<'a, T: LookupSubtable<'a>> Iterator for LookupSubtablesIter<'a, T> {
     fn next(&mut self) -> Option<Self::Item> {
         if self.index < self.data.len() {
             self.index += 1;
-            self.data.get(self.index - 1)
+            self.data.get(self.index - 1).map(|data| data.0)
         } else {
             None
         }
