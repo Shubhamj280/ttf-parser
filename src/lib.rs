@@ -813,7 +813,7 @@ pub struct FaceTables<'a> {
 #[derive(Clone)]
 pub struct Face<'a> {
     raw_face: RawFace<'a>,
-    tables: FaceTables<'a>, // Parsed tables.
+    pub tables: FaceTables<'a>, // Parsed tables.
     #[cfg(feature = "variable-fonts")]
     coordinates: VarCoords,
 }
