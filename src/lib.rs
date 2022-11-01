@@ -58,7 +58,6 @@ mod tables;
 #[cfg(feature = "opentype-layout")] mod ggg;
 #[cfg(feature = "variable-fonts")] mod var_store;
 
-use core::ops::Range;
 
 use parser::{Stream, NumFrom, TryNumFrom, Offset32, Offset};
 pub use parser::{FromData, LazyArray16, LazyArrayIter16, LazyArray32, LazyArrayIter32, Fixed};
@@ -1688,7 +1687,7 @@ impl<'a> Face<'a> {
     /// Also, a font can contain both: images and outlines. So when this method returns `None`
     /// you should also try `outline_glyph()` afterwards.
     #[inline]
-    pub fn glyph_svg_image_and_glyph_ids(&self, glyph_id: GlyphId) -> Option<(&'a [u8], Range<GlyphId>)> {
+    pub fn glyph_svg_image_and_glyph_ids(&self, glyph_id: GlyphId) -> Option<(&'a [u8], core::ops::RangeInclusive<GlyphId>)> {
         self.tables.svg.and_then(|svg| svg.documents.find_image_and_glyph_indices(glyph_id))
     }
 
