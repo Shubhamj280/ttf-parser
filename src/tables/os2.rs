@@ -364,7 +364,7 @@ fn char_range_index(c: char) -> i8 {
 pub struct Table<'a> {
     /// Table version.
     pub version: u8,
-    data: &'a [u8],
+    pub data: &'a [u8],
 }
 
 impl<'a> Table<'a> {
